@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>人工智能</title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				font-size: 14px;
+			}
+			#box{
+				width: 500px;
+				height: 550px;
+				margin: 50px auto;
+				border-radius: 5px;
+				box-shadow: 3px 3px 10px #999;
+				background-image: url(img/2.jpg);
+				opacity: .7;
+				display: flex;
+				flex-direction: column;
+			}
+			#box_header{
+				width: 100%;
+				height: 50px;
+				text-align: center;
+				line-height: 50px;
+				border-bottom: 1px solid #888;
+				background-color: aquamarine;
+			}
+			#box_header img{
+				width: 38px;
+				height: 38px;
+				vertical-align: middle;
+			}
+			#box_header span{
+				margin-left: 10px;
+				vertical-align: middle;
+			}
+			#box_center{
+				width: 100%;
+				height: 432px;
+				background-size: 624px 572px;
+				border-bottom-left-radius: 5px;
+				border-bottom-right-radius: 5px;
+				flex: 1;
+				overflow-y: auto;
+				position: relative;
+			}
+			#box_center::-webkit-scrollbar{
+				display: none;
+			}
+			#box_bottom{
+				width: 100%;
+				height: 140px;
+				border-top: 1px solid #888;
+				position: relative;
+				/* background-color: #FF0000; */
+			}
+			textarea{
+				width: 100%;
+				height: 140px;
+				border: 0;
+				/* text-indent: 50px; */
+				background: transparent;
+			}
+			#btn{
+				position: absolute;
+				right: 0;
+				bottom: 1px;
+				border: 0;
+				border-radius: 5px;
+				width: 112px;
+				height: 35px;
+				background: transparent;
+			}
+			/* 客户机 */
+			.icon-p{
+				width: 100%;
+				height: 38px;
+				/* background-color: #FF0000; */
+				position: relative;
+			}
+			.icon-p span{
+				position: absolute;
+				right: 60px;
+				line-height: 38px;
+				top: 5px;
+				/* color: #fff; */
+			}
+			.icon-p img{
+				width: 38px;
+				height: 38px;
+				position: absolute;
+				top: 5px;
+				right: 10px;
+			}
+			/* 主机 */
+			.com-p{
+				width: 100%;
+				height: 38px;
+				/* background-color: #FF0000; */
+				
+				position: relative;
+			}
+			.com-p span{
+				position: absolute;
+				left: 60px;
+				line-height: 38px;
+				/* color: #fff; */
+				/* background-color: #FF0000; */
+			}
+			.com-p img{
+				width: 38px;
+				height: 38px;
+				position: absolute;
+				left: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<div id="box_header"><img src="img/0.jpg"><span>_想不出名字的小孟</span></div>
+			<div id="box_center">
+			</div>
+			<div id="box_bottom"><textarea></textarea><button id="btn">发送</button></div>
+		</div>
+	</body>
+</html>
+<script src="ajaxfun.js"></script>
+<script type="text/javascript">
+	let oBtn = document.getElementById("btn");
+	let oText = document.getElementsByTagName("textarea")[0];
+	oText.onkeypress=function (evt){
+		let e=evt||event;
+		if(e.keyCode==13){
+			let boxCenter=document.getElementById("box_center");
+			let oText = document.getElementsByTagName("textarea")[0];
+			let iconP=document.createElement("p");
+			iconP.className="icon-p";
+			iconP.innerHTML="<span>"+oText.value+"</span><img src='img/1.jpg'>";
+			boxCenter.appendChild(iconP);
+			myAjax("GET","brain.php",true,"username=" + oText.value, callBack);
+			oText.value = "";
+			boxCenter.scrollTop = boxCenter.scrollHeight;
+		}
+	}
+	oBtn.onclick=function(evt){
+		let e=evt||event;
+		let boxCenter=document.getElementById("box_center");
+		let oText = document.getElementsByTagName("textarea")[0];
+		let iconP=document.createElement("p");
+		iconP.className="icon-p";
+		iconP.innerHTML="<span>"+oText.value+"</span><img src='img/1.jpg'>";
+		boxCenter.appendChild(iconP);
+		myAjax("GET","brain.php",true,"username=" + oText.value, callBack);
+		oText.value = "";
+		boxCenter.scrollTop = boxCenter.scrollHeight;
+	}
+	
+	let callBack=function(str){
+		let strJson=JSON.parse(str);
+		let boxCenter=document.getElementById("box_center");
+		let comP=document.createElement("p");
+		comP.className="com-p";
+		comP.innerHTML="<span>"+strJson.content+"</span><img src='img/0.jpg'>";
+		boxCenter.appendChild(comP);
+		boxCenter.scrollTop = boxCenter.scrollHeight;
+	}
+	
+</script>

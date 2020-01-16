@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>聊天对话框</title>
+	<style type="text/css">
+		* {
+			font-size: 14px;
+			padding: 0;
+			margin: 0;
+		}
+
+		.main {
+			position: relative;
+			margin: 20px auto;
+			border: 1px solid steelblue;
+			width: 430px;
+			height: 450px;
+		}
+
+		.mainUser {
+			height: 30px;
+			line-height: 30px;
+			border-bottom: 1px solid #ddd;
+			padding: 0 17px;
+		}
+
+		.msgInput {
+			display: block;
+			width: 406px;
+			height: 60px;
+			margin: 10px auto;
+
+		}
+
+		.sendbtn {
+			position: absolute;
+			width: 100px;
+			height: 29px;
+			bottom: 5px;
+			right: 10px;
+		}
+
+		.content {
+			list-style: none;
+			width: 410px;
+			height: 280px;
+			margin: 5px auto;
+			border: 1px dotted #D1D3D6;
+			overflow-y: scroll;
+		}
+
+		.msgContent {
+			width: 200px;
+			height: auto;
+			margin: 5px;
+			word-wrap: break-word;
+			word-break: break-all;
+
+		}
+
+		.msgContent img {
+			width: 30px;
+			height: 30px;
+			border-radius: 5px;
+		}
+
+		.msgContent.left img {
+			float: left;
+			margin-right: 5px;
+		}
+
+		.msgContent.right img {
+			float: right;
+			margin-left: 5px;
+		}
+
+		.content .left {
+			float: left;
+		}
+
+		.content .right {
+			float: right;
+		}
+
+		.content .right span,
+		.content .left span {
+			/* display: inline-block; */
+			padding: 5px;
+			border-radius: 5px;
+			line-height: 24px;
+			padding: 4px;
+		}
+
+		.content .left span {
+			float: left;
+			max-width: 150px;
+			background-color: lightgrey;
+		}
+
+		.content .right span {
+			float: right;
+			max-width: 150px;
+			background-color: yellowgreen;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="main" class="main">
+		<div class="mainUser">
+			尊敬的女神
+		</div>
+		<ul id="content" class="content">
+			<li class="msgContent left">
+				<img src="img/header_other.jpg" /><span class="">在吗？</span>
+			</li>
+			<li class="msgContent left">
+				<img src="img/header_other.jpg" /><span class="">小哥哥 你终于加我好友了，其实我已经关注你很久了</span>
+			</li>
+			<li class="msgContent right">
+				<img src="img/header_self.jpg" /><span class="">我其实也观察你很久了，你真是个漂亮的小仙女</span>
+			</li>
+			<li class="msgContent left">
+				<img src="img/header_other.jpg" /><span class="">哈哈哈哈</span>
+			</li>
+		</ul>
+		<textarea id="msg_input" class="msgInput"></textarea>
+		<button id="sendbtn" class="sendbtn">发送</button>
+	</div>
+</body>
+<script>
+	var msgContent = document.getElementById('msg_input');
+	var sendBtn = document.getElementById('sendbtn');
+	var content = document.getElementById('content');
+	// 键盘事件
+	msgContent.onkeypress = function (evt) {
+		var e = evt || event;
+		if (e.keyCode == 13) { // 回车发送消息
+
+			sendMsg();
+			// 阻止浏览器默认事件
+			e.preventDefault();
+		}
+	}
+	sendBtn.onclick = function () { // 点击按钮发送消息
+		sendMsg();
+		// content.style.overflowY = 'auto';
+	}
+
+	function sendMsg() {
+		// 获取发送的内容
+		var msg = msgContent.value;
+		// 创建li标签
+		var oLi = document.createElement('li');
+		// 给li添加class
+		oLi.className = 'msgContent right';
+		// 创建img标签
+		var oImg = document.createElement('img');
+		// 给img添加src值
+		oImg.src = 'img/header_self.jpg';
+		// 创建span标签
+		var oSpan = document.createElement('span');
+		// span的内容为发送的内容
+		oSpan.innerHTML = msg;
+		// 将span和img添加到li里面
+		oLi.append(oImg);
+		oLi.append(oSpan);
+		// li放到内容区域
+		content.appendChild(oLi);
+		msgContent.value = '';
+		// 请求php
+		// 消息滚动到最底部
+		content.scrollTop = content.scrollHeight;
+		getMsg(msg);
+	}
+
+	function getMsg(msg) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('get', 'brain.php?text=' + msg, true);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				fun(xhr.responseText);
+			}
+		}
+		xhr.send();
+	}
+
+	function fun(str) {
+		console.log(str);
+		console.log(JSON.parse(str).content);
+		var newStr = JSON.parse(str).content;
+		// 创建li标签
+		var oLi = document.createElement('li');
+		// 给li添加class
+		oLi.className = 'msgContent left';
+		// 创建img标签
+		var oImg = document.createElement('img');
+		// 给img添加src值
+		oImg.src = 'img/header_other.jpg';
+		// 创建span标签
+		var oSpan = document.createElement('span');
+		// span的内容为发送的内容
+		oSpan.innerHTML = newStr;
+		// 将span和img添加到li里面
+		oLi.append(oImg);
+		oLi.append(oSpan);
+		// li放到内容区域
+		content.appendChild(oLi);
+		// 消息滚动到最底部
+		content.scrollTop = content.scrollHeight;
+		msgContent.value = '';
+	}
+</script>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>聊天对话框</title>
+	<style type="text/css">
+		* {
+			font-size: 14px;
+			padding: 0;
+			margin: 0;
+		}
+
+		.main {
+			position: relative;
+			margin: 20px auto;
+			border: 1px solid steelblue;
+			width: 430px;
+			height: 450px;
+		}
+
+		.mainUser {
+			height: 30px;
+			line-height: 30px;
+			border-bottom: 1px solid #ddd;
+			padding: 0 17px;
+		}
+
+		.msgInput {
+			display: block;
+			width: 406px;
+			height: 60px;
+			margin: 10px auto;
+
+		}
+
+		.sendbtn {
+			position: absolute;
+			width: 100px;
+			height: 29px;
+			bottom: 5px;
+			right: 10px;
+		}
+
+		.content {
+			list-style: none;
+			width: 410px;
+			height: 280px;
+			margin: 5px auto;
+			border: 1px dotted #D1D3D6;
+			overflow-y: scroll;
+		}
+
+		.msgContent {
+			width: 200px;
+			height: auto;
+			margin: 5px;
+			word-wrap: break-word;
+			word-break: break-all;
+		}
+
+		.msgContent img {
+			width: 30px;
+			height: 30px;
+			border-radius: 5px;
+		}
+
+		.msgContent.left img {
+			float: left;
+			margin-right: 5px;
+		}
+
+		.msgContent.right img {
+			float: right;
+			margin-left: 5px;
+		}
+
+		.content .left {
+			float: left;
+		}
+
+		.content .right {
+			float: right;
+		}
+
+		.content .right span,
+		.content .left span {
+			/* display: inline-block; */
+			padding: 5px;
+			border-radius: 5px;
+			line-height: 24px;
+			padding: 4px;
+		}
+
+		.content .left span {
+			float: left;
+			background-color: lightgrey;
+			max-width: 150px;
+		}
+
+		.content .right span {
+			float: right;
+			background-color: yellowgreen;
+			max-width: 150px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="main" class="main">
+		<div class="mainUser">
+			尊敬的女神
+		</div>
+		<ul id="content" class="content">
+			<li class="msgContent left">
+				<img src="header_other.jpg" /><span class="">在吗？</span>
+			</li>
+			<li class="msgContent left">
+				<img src="header_other.jpg" /><span class="">小哥哥 在做什么?</span>
+			</li>
+			<li class="msgContent right">
+				<img src="header_self.jpg" /><span class="">打游戏 别烦我</span>
+			</li>
+			<li class="msgContent left">
+				<img src="header_other.jpg" /><span class="">注孤生 再见！</span>
+			</li>
+		</ul>
+		<textarea id="msg_input" class="msgInput"></textarea>
+		<button id="sendbtn" class="sendbtn">发送</button>
+	</div>
+</body>
+<script>
+	var msgContent = document.getElementsByClassName('msgInput')[0];
+	var senBtn = document.getElementsByClassName('sendbtn')[0];
+	var content = document.getElementsByClassName('content')[0];
+	senBtn.onclick = function () {
+		sendMsg(msgContent.value);
+	}
+
+	function sendMsg(msg) {
+		// 右侧聊天信息
+		var oLi = document.createElement('li');
+		var oSpan = document.createElement('span');
+		var oImg = document.createElement('img');
+		oImg.setAttribute('src', 'header_self.jpg');
+		oSpan.innerHTML = msg;
+		oLi.append(oImg);
+
+		oLi.append(oSpan);
+		oLi.className = 'msgContent right';
+		content.append(oLi);
+		msgContent.value = '';
+
+		let url = 'http://www.tuling123.com/openapi/api?key=c5e64e962cbd4e1ba1cbfa0983a36a30&info=' + msgContent.value +
+			'&userid=521492';
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				console.log(xhr.responseText); // {code:4000,text:'哈哈哈哈'}
+				let str = JSON.parse(xhr.responseText);
+				fun(str.text);
+			}
+		}
+		xhr.send();
+	}
+
+	function fun(str) {
+		var oLi = document.createElement('li');
+		var oSpan = document.createElement('span');
+		var oImg = document.createElement('img');
+		oImg.setAttribute('src', 'header_other.jpg');
+		oSpan.innerHTML = str;
+		oLi.append(oImg);
+		oLi.append(oSpan);
+
+		oLi.className = 'msgContent left';
+		content.append(oLi);
+	}
+</script>
+
+</html>
